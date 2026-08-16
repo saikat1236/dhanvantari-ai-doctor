@@ -31,6 +31,47 @@ document.addEventListener('DOMContentLoaded', () => {
     setupSpeechRecognition();
 });
 
+// Mobile Sidebar & Tab Switcher Helpers
+function toggleMobileSidebar(forceState = null) {
+    const sidebar = document.getElementById('sidebar');
+    const backdrop = document.getElementById('sidebar-backdrop');
+    if (!sidebar || !backdrop) return;
+
+    if (forceState !== null) {
+        if (forceState) {
+            sidebar.classList.add('open');
+            backdrop.classList.add('active');
+        } else {
+            sidebar.classList.remove('open');
+            backdrop.classList.remove('active');
+        }
+    } else {
+        sidebar.classList.toggle('open');
+        backdrop.classList.toggle('active');
+    }
+}
+
+function switchMobilePatientTab(tabName) {
+    const chatTabBtn = document.getElementById('tab-btn-chat');
+    const symptomsTabBtn = document.getElementById('tab-btn-symptoms');
+    const chatPanel = document.getElementById('chat-panel-section');
+    const symptomsPanel = document.getElementById('symptoms-panel-section');
+
+    if (!chatTabBtn || !symptomsTabBtn || !chatPanel || !symptomsPanel) return;
+
+    if (tabName === 'chat') {
+        chatTabBtn.classList.add('active');
+        symptomsTabBtn.classList.remove('active');
+        chatPanel.classList.remove('mobile-hidden');
+        symptomsPanel.classList.remove('mobile-active');
+    } else {
+        symptomsTabBtn.classList.add('active');
+        chatTabBtn.classList.remove('active');
+        chatPanel.classList.add('mobile-hidden');
+        symptomsPanel.classList.add('mobile-active');
+    }
+}
+
 // View Swapper
 function switchView(viewName) {
     currentView = viewName;
@@ -40,7 +81,7 @@ function switchView(viewName) {
     if (viewName === 'patient') {
         document.getElementById('nav-patient').classList.add('active');
         document.getElementById('view-patient').classList.add('active');
-        document.getElementById('view-title-text').innerText = 'Patient Triage Portal';
+        document.getElementById('view-title-text').innerText = 'Patient Portal';
     } else if (viewName === 'doctor') {
         if (isLiveCallActive) {
             toggleLiveDoctorCall();

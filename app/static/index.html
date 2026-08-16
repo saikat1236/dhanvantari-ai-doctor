@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <title>Dhanvantari AI Doctor Portal</title>
     <link rel="stylesheet" href="/static/css/style.css">
     <!-- Three.js 3D WebGL Library -->
@@ -11,18 +11,22 @@
 <body>
 
     <div id="app-layout">
-        <!-- Sidebar Navigation -->
+        <!-- Mobile Sidebar Backdrop -->
+        <div class="sidebar-backdrop" id="sidebar-backdrop" onclick="toggleMobileSidebar()"></div>
+
+        <!-- Sidebar Navigation (Desktop + Mobile Slideout Drawer) -->
         <aside id="sidebar">
             <div class="brand-section">
                 <div class="brand-icon">D</div>
                 <div class="brand-name">Dhanvantari</div>
+                <button class="sidebar-close-btn" onclick="toggleMobileSidebar()">&times;</button>
             </div>
             
             <ul class="nav-menu" style="margin-bottom: 24px;">
-                <li class="nav-item active" id="nav-patient" onclick="switchView('patient')">
+                <li class="nav-item active" id="nav-patient" onclick="switchView('patient'); toggleMobileSidebar(false);">
                     <span>Patient Triage Portal</span>
                 </li>
-                <li class="nav-item" id="nav-doctor" onclick="switchView('doctor')">
+                <li class="nav-item" id="nav-doctor" onclick="switchView('doctor'); toggleMobileSidebar(false);">
                     <span>RMP Doctor Dashboard</span>
                 </li>
             </ul>
@@ -58,16 +62,25 @@
         <!-- Main Workspace -->
         <main id="main-content">
             <header class="top-header">
-                <div style="display: flex; align-items: center; gap: 14px;">
-                    <h1 class="view-title" id="view-title-text">Patient Triage Portal</h1>
+                <div class="header-left">
+                    <button class="mobile-menu-btn" id="btn-mobile-menu" onclick="toggleMobileSidebar()" title="Toggle Menu">
+                        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="18" x2="21" y2="18"></line></svg>
+                    </button>
+                    <h1 class="view-title" id="view-title-text">Patient Portal</h1>
+                </div>
+
+                <div class="header-actions">
                     <button class="btn-live-call" id="btn-toggle-live-call" onclick="toggleLiveDoctorCall()">
                         <span class="pulse-red-dot"></span>
-                        Start 3D Live Doctor Call
+                        <span class="btn-label-desktop">Start 3D Live Doctor Call</span>
+                        <span class="btn-label-mobile">🔴 3D Call</span>
                     </button>
                     <button class="btn-end-prescription" id="btn-open-prescription" onclick="endVisitAndGeneratePrescription()">
-                        📋 End Visit & Get Prescription
+                        <span class="btn-label-desktop">📋 End Visit & Get Prescription</span>
+                        <span class="btn-label-mobile">📋 Get Rx</span>
                     </button>
                 </div>
+
                 <div class="patient-info-pill" id="patient-info-display" style="display:none;">
                     <span>Patient ID: Not Registered</span>
                 </div>
@@ -84,7 +97,7 @@
                             <div class="hud-top-bar">
                                 <div class="hud-doctor-tag">
                                     <span class="live-glow-dot"></span>
-                                    <span>DR. DHANVANTARI, MD • 3D HOLOGRAPHIC AI DOCTOR</span>
+                                    <span class="hud-title-text">DR. DHANVANTARI, MD • 3D HOLOGRAPHIC AI DOCTOR</span>
                                 </div>
                                 <div class="hud-model-pill" id="doctor-3d-engine-tag">
                                     🎙️ VibeVoice 1.5B Active
@@ -117,10 +130,20 @@
                     </div>
                 </div>
 
+                <!-- Mobile Sub-Navigation Tabs (Switch between Chat & Symptoms on small screens) -->
+                <div class="mobile-patient-tabs" id="mobile-patient-tab-bar">
+                    <button class="mobile-tab-btn active" id="tab-btn-chat" onclick="switchMobilePatientTab('chat')">
+                        💬 Consultation Chat
+                    </button>
+                    <button class="mobile-tab-btn" id="tab-btn-symptoms" onclick="switchMobilePatientTab('symptoms')">
+                        📊 Triage & Symptoms
+                    </button>
+                </div>
+
                 <!-- Main Consultation & Chat Grid -->
                 <div class="patient-grid">
                     <!-- Left Symptoms Tracker Panel -->
-                    <div class="symptoms-panel">
+                    <div class="symptoms-panel" id="symptoms-panel-section">
                         <div class="card triage-card">
                             <h3 class="section-label">Active Triage Level</h3>
                             <div class="status-badge" id="triage-status-badge">NOT INITIALIZED</div>
@@ -137,7 +160,7 @@
                     </div>
 
                     <!-- Right Chat Triage Bot -->
-                    <div class="chat-panel">
+                    <div class="chat-panel" id="chat-panel-section">
                         <div class="chat-history" id="chat-history-container">
                             <!-- Disclaimer Message -->
                             <div class="chat-message assistant">
@@ -156,7 +179,7 @@
                         </div>
 
                         <!-- Typing Indicator -->
-                        <div class="typing-indicator" id="chat-typing-indicator" style="margin-left: 32px; margin-bottom: 12px;">
+                        <div class="typing-indicator" id="chat-typing-indicator" style="margin-left: 20px; margin-bottom: 12px;">
                             <div class="typing-dot"></div>
                             <div class="typing-dot"></div>
                             <div class="typing-dot"></div>
@@ -179,7 +202,7 @@
                             <button class="btn-mic" id="btn-chat-mic" onclick="toggleMicRecording()" title="Speak your symptoms">
                                 <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3Z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" x2="12" y1="19" y2="22"/></svg>
                             </button>
-                            <input type="text" class="chat-input" id="chat-user-input" placeholder="Type symptoms or attach X-Ray / Lab report..." onkeydown="handleChatKey(event)">
+                            <input type="text" class="chat-input" id="chat-user-input" placeholder="Type symptoms or speak..." onkeydown="handleChatKey(event)">
                             <button class="btn-send" id="chat-send-btn" onclick="sendChatMessage()">
                                 Send
                             </button>
@@ -251,13 +274,13 @@
         <div class="prescription-card-modal">
             <div class="prescription-header">
                 <div>
-                    <h2 style="font-family: var(--font-outfit); font-size: 20px;">Digital Medical Prescription</h2>
-                    <p style="font-size: 12px; opacity: 0.9; margin-top: 2px;">Dhanvantari Telehealth • Telemedicine Practice Guidelines 2020</p>
+                    <h2 style="font-family: var(--font-outfit); font-size: 18px;">Digital Medical Prescription</h2>
+                    <p style="font-size: 11px; opacity: 0.9; margin-top: 2px;">Dhanvantari Telehealth • Telemedicine Practice Guidelines 2020</p>
                 </div>
                 <button onclick="closePrescriptionModal()" style="background: none; border: none; color: #fff; font-size: 24px; cursor: pointer;">&times;</button>
             </div>
             <div class="prescription-body">
-                <div style="display: flex; justify-content: space-between; align-items: center; background: #f8fafc; padding: 12px 16px; border-radius: 8px; border: 1px solid var(--border-color); font-size: 12px;">
+                <div style="display: flex; justify-content: space-between; align-items: center; background: #f8fafc; padding: 10px 14px; border-radius: 8px; border: 1px solid var(--border-color); font-size: 11px; flex-wrap: wrap; gap: 8px;">
                     <div>
                         <strong>Patient ID:</strong> <span id="rx-patient-id">PAT-101</span><br>
                         <strong>Date:</strong> <span id="rx-date">16-Aug-2026</span>
@@ -269,44 +292,46 @@
                 </div>
 
                 <div>
-                    <h4 style="font-family: var(--font-outfit); font-size: 13px; color: var(--text-muted); text-transform: uppercase; margin-bottom: 4px;">Primary Clinical Diagnosis</h4>
-                    <div style="font-size: 15px; font-weight: 600; color: var(--text-main);" id="rx-diagnosis-text">
+                    <h4 style="font-family: var(--font-outfit); font-size: 12px; color: var(--text-muted); text-transform: uppercase; margin-bottom: 4px;">Primary Clinical Diagnosis</h4>
+                    <div style="font-size: 14px; font-weight: 600; color: var(--text-main);" id="rx-diagnosis-text">
                         Acute Febrile Presentation (ICD-10: R50.9)
                     </div>
                 </div>
 
                 <div>
-                    <h4 style="font-family: var(--font-outfit); font-size: 13px; color: var(--text-muted); text-transform: uppercase; margin-bottom: 6px;">Rx - Prescribed Medications (NLEM Grounded)</h4>
-                    <table class="rx-med-table">
-                        <thead>
-                            <tr>
-                                <th>Medication</th>
-                                <th>Dosage & Frequency</th>
-                                <th>Duration</th>
-                            </tr>
-                        </thead>
-                        <tbody id="rx-medications-table-body">
-                            <!-- Populated dynamically -->
-                        </tbody>
-                    </table>
+                    <h4 style="font-family: var(--font-outfit); font-size: 12px; color: var(--text-muted); text-transform: uppercase; margin-bottom: 6px;">Rx - Prescribed Medications (NLEM Grounded)</h4>
+                    <div style="overflow-x: auto;">
+                        <table class="rx-med-table">
+                            <thead>
+                                <tr>
+                                    <th>Medication</th>
+                                    <th>Dosage & Frequency</th>
+                                    <th>Duration</th>
+                                </tr>
+                            </thead>
+                            <tbody id="rx-medications-table-body">
+                                <!-- Populated dynamically -->
+                            </tbody>
+                        </table>
+                    </div>
                 </div>
 
                 <div>
-                    <h4 style="font-family: var(--font-outfit); font-size: 13px; color: var(--text-muted); text-transform: uppercase; margin-bottom: 4px;">Clinical Advice & Hydration</h4>
-                    <ul id="rx-advice-list" style="font-size: 12px; line-height: 1.6; padding-left: 18px; color: var(--text-main);">
+                    <h4 style="font-family: var(--font-outfit); font-size: 12px; color: var(--text-muted); text-transform: uppercase; margin-bottom: 4px;">Clinical Advice & Hydration</h4>
+                    <ul id="rx-advice-list" style="font-size: 12px; line-height: 1.5; padding-left: 18px; color: var(--text-main);">
                         <!-- Populated dynamically -->
                     </ul>
                 </div>
 
-                <div style="background: rgba(239, 68, 68, 0.05); border: 1px dashed rgba(239, 68, 68, 0.3); padding: 10px 14px; border-radius: 8px; font-size: 11px; color: var(--text-muted);">
+                <div style="background: rgba(239, 68, 68, 0.05); border: 1px dashed rgba(239, 68, 68, 0.3); padding: 8px 12px; border-radius: 8px; font-size: 10px; color: var(--text-muted);">
                     ⚠️ <strong>Telemedicine Compliance:</strong> This electronic prescription is pre-generated under clinical supervision. In compliance with the Telemedicine Guidelines 2020 (India), no Schedule X drugs are permitted.
                 </div>
             </div>
             <div class="prescription-footer">
                 <button class="quick-reply-btn" onclick="closePrescriptionModal()">Close</button>
-                <a id="btn-download-pdf-link" href="#" target="_blank" class="btn-primary" style="text-decoration: none; display: inline-flex; align-items: center; gap: 8px; font-size: 13px;">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" x2="12" y1="15" y2="3"/></svg>
-                    Download Official PDF Prescription
+                <a id="btn-download-pdf-link" href="#" target="_blank" class="btn-primary" style="text-decoration: none; display: inline-flex; align-items: center; gap: 8px; font-size: 12px;">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" x2="12" y1="15" y2="3"/></svg>
+                    Download Official PDF
                 </a>
             </div>
         </div>
@@ -317,7 +342,7 @@
         <div class="consent-modal">
             <div class="consent-header">
                 <h2>DPDP Act 2023 Consent</h2>
-                <p style="font-size: 13px; color: var(--text-muted); margin-top: 4px;">Indian Telemedicine Practice Guidelines & Privacy Protocol</p>
+                <p style="font-size: 12px; color: var(--text-muted); margin-top: 4px;">Indian Telemedicine Practice Guidelines & Privacy Protocol</p>
             </div>
             
             <div class="consent-box">
