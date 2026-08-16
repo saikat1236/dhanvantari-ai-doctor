@@ -6,8 +6,8 @@
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <title>Dhanvantari AI Doctor Portal</title>
-    <!-- Cache-busting v2.5.0 -->
-    <link rel="stylesheet" href="/static/css/style.css?v=2.5.0">
+    <!-- Cache-busting v2.6.0 -->
+    <link rel="stylesheet" href="/static/css/style.css?v=2.6.0">
     <!-- Three.js 3D WebGL Library -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
 </head>
@@ -25,6 +25,12 @@
                     <div class="brand-name">Dhanvantari AI</div>
                 </div>
                 <button class="sidebar-close-btn" onclick="toggleMobileSidebar()">&times;</button>
+            </div>
+
+            <!-- Patient ID Badge in Sidebar -->
+            <div class="sidebar-patient-card" id="sidebar-patient-display" style="display:none;">
+                <span class="patient-card-label">Active Patient ID</span>
+                <span class="patient-card-id" id="sidebar-patient-id-text">PAT-101</span>
             </div>
             
             <ul class="nav-menu">
@@ -68,6 +74,7 @@
 
         <!-- Main Workspace -->
         <main id="main-content">
+            <!-- Sleek Top Header -->
             <header class="top-header">
                 <div class="header-left">
                     <button class="mobile-menu-btn" id="btn-mobile-menu" onclick="toggleMobileSidebar()" title="Toggle Navigation">
@@ -75,24 +82,29 @@
                     </button>
                     <div class="header-title-box">
                         <h1 class="view-title" id="view-title-text">Dr. Dhanvantari</h1>
-                        <span class="header-online-status"><span class="status-dot"></span> AI Online</span>
+                        <span class="header-online-status"><span class="status-dot"></span> Online</span>
                     </div>
                 </div>
 
-                <div class="header-actions">
+                <!-- Desktop Action Buttons (Hidden on mobile to prevent crowding) -->
+                <div class="header-actions desktop-only">
                     <button class="btn-live-call" id="btn-toggle-live-call" onclick="toggleLiveDoctorCall()">
                         <span class="pulse-red-dot"></span>
-                        <span class="btn-label-desktop">Start 3D Live Doctor Call</span>
-                        <span class="btn-label-mobile">3D Call</span>
+                        <span>Start 3D Live Doctor Call</span>
                     </button>
                     <button class="btn-end-prescription" id="btn-open-prescription" onclick="endVisitAndGeneratePrescription()">
-                        <span class="btn-label-desktop">📋 End Visit & Get Rx</span>
-                        <span class="btn-label-mobile">📋 Rx</span>
+                        <span>📋 End Visit & Get Rx</span>
                     </button>
+                    <div class="patient-info-pill" id="patient-info-display" style="display:none;">
+                        <span>Patient ID: Not Registered</span>
+                    </div>
                 </div>
 
-                <div class="patient-info-pill" id="patient-info-display" style="display:none;">
-                    <span>Patient ID: Not Registered</span>
+                <!-- Minimal Mobile Avatar Icon -->
+                <div class="mobile-header-right mobile-only">
+                    <div class="mobile-doctor-avatar" onclick="toggleMobileSidebar()">
+                        <span>🩺</span>
+                    </div>
                 </div>
             </header>
 
@@ -172,7 +184,7 @@
                         <div class="card" style="background: rgba(13, 148, 136, 0.05); border-color: rgba(13, 148, 136, 0.2);">
                             <h3 class="section-label" style="color: var(--primary);">Clinical Voice Features</h3>
                             <p style="font-size: 12px; line-height: 1.5; color: var(--text-muted); margin-top: 6px;">
-                                Tap <strong>Start 3D Live Doctor Call</strong> or the microphone icon to speak naturally in Hindi or English.
+                                Tap <strong>3D Call</strong> in the bottom bar or the microphone icon to speak naturally in Hindi or English.
                             </p>
                         </div>
                     </div>
@@ -416,8 +428,8 @@
     <!-- Toast Notifications -->
     <div class="toast-container" id="toast-container"></div>
 
-    <!-- Scripts with Cache-busting v2.5.0 -->
-    <script src="/static/js/visualizer3d.js?v=2.5.0"></script>
-    <script src="/static/js/app.js?v=2.5.0"></script>
+    <!-- Scripts with Cache-busting v2.6.0 -->
+    <script src="/static/js/visualizer3d.js?v=2.6.0"></script>
+    <script src="/static/js/app.js?v=2.6.0"></script>
 </body>
 </html>

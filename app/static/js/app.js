@@ -25,8 +25,16 @@ document.addEventListener('DOMContentLoaded', () => {
     if (patientId) {
         document.getElementById('consent-modal-overlay').style.display = 'none';
         const display = document.getElementById('patient-info-display');
-        display.style.display = 'flex';
-        display.querySelector('span').innerText = `Patient ID: ${patientId}`;
+        if (display) {
+            display.style.display = 'flex';
+            display.querySelector('span').innerText = `Patient ID: ${patientId}`;
+        }
+        const sidebarDisplay = document.getElementById('sidebar-patient-display');
+        const sidebarText = document.getElementById('sidebar-patient-id-text');
+        if (sidebarDisplay && sidebarText) {
+            sidebarDisplay.style.display = 'flex';
+            sidebarText.innerText = patientId;
+        }
     }
     setupSpeechRecognition();
 });
