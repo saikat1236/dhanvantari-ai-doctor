@@ -20,7 +20,7 @@ def generate_prescription_pdf(
     rmp_name: str = "Dr. Vikram R. Iyer, MBBS, MD",
     rmp_reg_no: str = "RMP-MCI-983120"
 ) -> bytes:
-    """Generates an official India Telemedicine Guidelines 2020 compliant Prescription PDF."""
+    """Generates an official India Telemedicine Guidelines 2020 compliant Prescription PDF with Jan Aushadhi Generic Pricing."""
     buffer = io.BytesIO()
     doc = SimpleDocTemplate(
         buffer,
@@ -53,8 +53,8 @@ def generate_prescription_pdf(
     header_style = ParagraphStyle(
         'SectionHeader',
         parent=styles['Heading2'],
-        fontSize=12,
-        leading=16,
+        fontSize=11.5,
+        leading=15,
         textColor=colors.HexColor('#0f172a'),
         fontName='Helvetica-Bold',
         spaceBefore=8,
@@ -63,17 +63,33 @@ def generate_prescription_pdf(
     body_style = ParagraphStyle(
         'BodyDark',
         parent=styles['Normal'],
-        fontSize=9.5,
-        leading=13,
+        fontSize=9,
+        leading=12,
         textColor=colors.HexColor('#334155'),
         fontName='Helvetica'
     )
     bold_style = ParagraphStyle(
         'BodyDarkBold',
         parent=styles['Normal'],
-        fontSize=9.5,
-        leading=13,
+        fontSize=9,
+        leading=12,
         textColor=colors.HexColor('#0f172a'),
+        fontName='Helvetica-Bold'
+    )
+    generic_tag_style = ParagraphStyle(
+        'GenericTag',
+        parent=styles['Normal'],
+        fontSize=8,
+        leading=10,
+        textColor=colors.HexColor('#0d9488'),
+        fontName='Helvetica-Bold'
+    )
+    price_savings_style = ParagraphStyle(
+        'PriceSavings',
+        parent=styles['Normal'],
+        fontSize=8,
+        leading=10,
+        textColor=colors.HexColor('#16a34a'),
         fontName='Helvetica-Bold'
     )
     disclaimer_style = ParagraphStyle(
@@ -94,7 +110,7 @@ def generate_prescription_pdf(
             Paragraph(f"<b>Prescription ID:</b> RX-{conversation_id[-8:]}<br/><b>Date:</b> {datetime.utcnow().strftime('%d-%b-%Y %H:%M UTC')}", subtitle_style)
         ],
         [
-            Paragraph("Empowering Autonomous Telehealth • Registered Medical Telemedicine Practice", subtitle_style),
+            Paragraph("Pradhan Mantri Bhartiya Janaushadhi (PMBJP) Grounded • Telemedicine 2020 Compliant", subtitle_style),
             Paragraph(f"<b>Reviewing RMP:</b> {rmp_name}<br/><b>Reg License No:</b> {rmp_reg_no}", subtitle_style)
         ]
     ]
@@ -104,8 +120,8 @@ def generate_prescription_pdf(
         ('ALIGN', (1,0), (1,-1), 'RIGHT'),
     ]))
     story.append(header_table)
-    story.append(Spacer(1, 8))
-    story.append(HRFlowable(width="100%", thickness=1.5, color=colors.HexColor('#0d9488'), spaceBefore=2, spaceAfter=8))
+    story.append(Spacer(1, 6))
+    story.append(HRFlowable(width="100%", thickness=1.5, color=colors.HexColor('#0d9488'), spaceBefore=2, spaceAfter=6))
 
     # 2. Patient & Encounter Details Table
     patient_info_data = [
@@ -125,12 +141,12 @@ def generate_prescription_pdf(
     patient_table = Table(patient_info_data, colWidths=[90, 180, 110, 160])
     patient_table.setStyle(TableStyle([
         ('BACKGROUND', (0,0), (-1,-1), colors.HexColor('#f8fafc')),
-        ('PADDING', (0,0), (-1,-1), 5),
+        ('PADDING', (0,0), (-1,-1), 4),
         ('BOX', (0,0), (-1,-1), 0.5, colors.HexColor('#cbd5e1')),
         ('INNERGRID', (0,0), (-1,-1), 0.5, colors.HexColor('#e2e8f0')),
     ]))
     story.append(patient_table)
-    story.append(Spacer(1, 10))
+    story.append(Spacer(1, 8))
 
     # 3. Chief Complaints & Primary Clinical Diagnosis
     story.append(Paragraph("CLINICAL DIAGNOSIS & PRESENTATION", header_style))
@@ -142,83 +158,89 @@ def generate_prescription_pdf(
     diag_table = Table(diag_data, colWidths=[130, 410])
     diag_table.setStyle(TableStyle([
         ('VALIGN', (0,0), (-1,-1), 'TOP'),
-        ('PADDING', (0,0), (-1,-1), 4),
+        ('PADDING', (0,0), (-1,-1), 3),
     ]))
     story.append(diag_table)
-    story.append(Spacer(1, 8))
+    story.append(Spacer(1, 6))
 
-    # 4. Rx Medications Table (NLEM Grounded)
-    story.append(Paragraph("<b>Rx</b> - PRESCRIBED MEDICATIONS & FORMULARY GUIDANCE", header_style))
+    # 4. Rx Medications Table with Generic Salt Names & Jan Aushadhi PMBJP Pricing
+    story.append(Paragraph("<b>Rx</b> - PRESCRIBED MEDICATIONS & JAN AUSHADHI GENERIC SAVINGS", header_style))
     
     med_table_data = [
         [
             Paragraph("<b>#</b>", bold_style),
-            Paragraph("<b>Medication (Molecule & Strength)</b>", bold_style),
-            Paragraph("<b>Dosage & Frequency</b>", bold_style),
+            Paragraph("<b>Generic Salt & Formulation</b>", bold_style),
+            Paragraph("<b>Dosage & Timing</b>", bold_style),
             Paragraph("<b>Duration</b>", bold_style),
-            Paragraph("<b>NLEM Status</b>", bold_style)
+            Paragraph("<b>Jan Aushadhi Price</b>", bold_style)
         ]
     ]
 
     for idx, med in enumerate(medications, start=1):
-        mol = med.get('molecule', 'Standard OTC Formulation')
+        mol = med.get('generic_salt', med.get('molecule', 'Generic Salt Formulation IP'))
         strength = med.get('strength', '')
         dose = med.get('dosage', med.get('standard_dose', 'As directed by physician'))
-        freq = med.get('frequency', 'Thrice daily')
+        freq = med.get('frequency', 'Twice daily after meals')
         dur = med.get('duration', '3-5 days')
-        nlem = "NLEM List A" if med.get('nlem_listed', True) else "OTC Generic"
+        ja_price = med.get('jan_aushadhi_price', '₹10 - ₹20')
+        branded_price = med.get('branded_price', '₹80 - ₹120')
 
         med_table_data.append([
             Paragraph(str(idx), body_style),
-            Paragraph(f"<b>{mol}</b><br/><font color='#64748b'>{strength}</font>", body_style),
-            Paragraph(f"{dose}<br/><font color='#0d9488'>{freq}</font>", body_style),
+            Paragraph(f"<b>{mol}</b><br/><font color='#0d9488'>{strength}</font>", body_style),
+            Paragraph(f"{dose}<br/><font color='#64748b'>{freq}</font>", body_style),
             Paragraph(dur, body_style),
-            Paragraph(nlem, subtitle_style)
+            Paragraph(f"<font color='#16a34a'><b>{ja_price}</b></font><br/><font color='#94a3b8'><s>{branded_price}</s></font>", body_style)
         ])
 
     if len(med_table_data) == 1:
         med_table_data.append([
             Paragraph("1", body_style),
-            Paragraph("<b>Paracetamol (Acetaminophen) 500mg</b>", body_style),
-            Paragraph("1 tablet every 6-8 hrs as needed for fever/pain", body_style),
+            Paragraph("<b>Paracetamol IP 500mg</b><br/><font color='#0d9488'>NLEM Essential Salt</font>", body_style),
+            Paragraph("1 tablet every 6-8 hrs as needed for fever<br/><font color='#64748b'>Take after food</font>", body_style),
             Paragraph("3 days", body_style),
-            Paragraph("NLEM List A", subtitle_style)
+            Paragraph("<font color='#16a34a'><b>₹10 (10 tabs)</b></font><br/><font color='#94a3b8'><s>Branded: ₹80</s></font>", body_style)
+        ])
+        med_table_data.append([
+            Paragraph("2", body_style),
+            Paragraph("<b>Oral Rehydration Salts (ORS) WHO Formula</b><br/><font color='#0d9488'>Electrolyte Restorative</font>", body_style),
+            Paragraph("Dissolve 1 sachet in 1 Litre clean drinking water; drink frequently", body_style),
+            Paragraph("2-3 days", body_style),
+            Paragraph("<font color='#16a34a'><b>₹7 / sachet</b></font><br/><font color='#94a3b8'><s>Branded: ₹35</s></font>", body_style)
         ])
 
-    med_table = Table(med_table_data, colWidths=[24, 190, 180, 70, 76])
+    med_table = Table(med_table_data, colWidths=[20, 195, 175, 65, 85])
     med_table.setStyle(TableStyle([
         ('BACKGROUND', (0,0), (-1,0), colors.HexColor('#f1f5f9')),
-        ('PADDING', (0,0), (-1,-1), 5),
+        ('PADDING', (0,0), (-1,-1), 4),
         ('BOX', (0,0), (-1,-1), 0.5, colors.HexColor('#94a3b8')),
         ('INNERGRID', (0,0), (-1,-1), 0.5, colors.HexColor('#cbd5e1')),
         ('VALIGN', (0,0), (-1,-1), 'MIDDLE'),
     ]))
     story.append(med_table)
-    story.append(Spacer(1, 10))
+    story.append(Spacer(1, 8))
 
-    # 5. Diagnostic Investigations & Self-Care Advice
+    # 5. Rural First-Aid & Nearest PHC / Jan Aushadhi Advice
+    story.append(Paragraph("VILLAGE FIRST-AID & JAN AUSHADHI KENDRA GUIDANCE", header_style))
+    story.append(Paragraph("• <b>Jan Aushadhi Kendra (PMBJP):</b> Request the above Generic Salts at your nearest government Jan Aushadhi medical store for 80-90% subsidized pricing.", body_style))
+    story.append(Paragraph("• <b>Clean Water & Home Hydration:</b> Boil drinking water for 10 minutes. In diarrhea/fever, prepare homemade ORS: 6 teaspoons sugar + ½ teaspoon salt in 1 litre boiled water.", body_style))
+    story.append(Paragraph("• <b>Emergency Ambulance 108:</b> If patient exhibits difficulty breathing, chest pain, altered consciousness, or high fever with stiff neck, call <b>108 (Free Govt Ambulance)</b> immediately.", body_style))
+
     if investigations:
-        story.append(Paragraph("RECOMMENDED INVESTIGATIONS", header_style))
+        story.append(Spacer(1, 4))
+        story.append(Paragraph("RECOMMENDED INVESTIGATIONS AT NEAREST PHC / CHC", header_style))
         for inv in investigations:
-            story.append(Paragraph(f"• {inv}", body_style))
-        story.append(Spacer(1, 6))
-
-    if advice:
-        story.append(Paragraph("CLINICAL ADVICE & HYDRATION PROTOCOL", header_style))
-        for adv in advice:
-            story.append(Paragraph(f"• {adv}", body_style))
-        story.append(Spacer(1, 10))
+            story.append(Paragraph(f"• {inv} (Available at Govt Primary Health Centre)", body_style))
 
     # 6. Legal Watermark & Doctor Digital Signature Block
-    story.append(HRFlowable(width="100%", thickness=1, color=colors.HexColor('#cbd5e1'), spaceBefore=8, spaceAfter=8))
+    story.append(HRFlowable(width="100%", thickness=1, color=colors.HexColor('#cbd5e1'), spaceBefore=6, spaceAfter=6))
     
     sig_data = [
         [
             Paragraph(
-                "<b>TELEMEDICINE REGULATORY NOTICE:</b><br/>"
-                "Issued in strict compliance with the <i>Telemedicine Practice Guidelines 2020 (India)</i> and <i>DPDP Act 2023</i>. "
-                "Schedule X drugs and habit-forming narcotics are prohibited under Telemedicine rules. "
-                "This electronic consultation was verified under clinical supervisor oversight.",
+                "<b>TELEMEDICINE REGULATORY & JAN AUSHADHI NOTICE:</b><br/>"
+                "Issued under the <i>Telemedicine Practice Guidelines 2020 (India)</i> and <i>DPDP Act 2023</i>. "
+                "Schedule X drugs are strictly prohibited. Generic salt substitutions are recommended under PMBJP guidelines.",
                 disclaimer_style
             ),
             Paragraph(
