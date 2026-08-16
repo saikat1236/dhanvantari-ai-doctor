@@ -64,11 +64,29 @@ function switchMobilePatientTab(tabName) {
         symptomsTabBtn.classList.remove('active');
         chatPanel.classList.remove('mobile-hidden');
         symptomsPanel.classList.remove('mobile-active');
+        updateMobileNavActive('mob-nav-chat');
     } else {
         symptomsTabBtn.classList.add('active');
         chatTabBtn.classList.remove('active');
         chatPanel.classList.add('mobile-hidden');
         symptomsPanel.classList.add('mobile-active');
+        updateMobileNavActive('mob-nav-vitals');
+    }
+}
+
+function updateMobileNavActive(activeId) {
+    document.querySelectorAll('.mobile-nav-item').forEach(el => el.classList.remove('active'));
+    const item = document.getElementById(activeId);
+    if (item) item.classList.add('active');
+}
+
+function switchMobileBottomView(tabOrView) {
+    if (tabOrView === 'chat') {
+        if (currentView !== 'patient') switchView('patient');
+        switchMobilePatientTab('chat');
+    } else if (tabOrView === 'symptoms') {
+        if (currentView !== 'patient') switchView('patient');
+        switchMobilePatientTab('symptoms');
     }
 }
 
@@ -81,7 +99,8 @@ function switchView(viewName) {
     if (viewName === 'patient') {
         document.getElementById('nav-patient').classList.add('active');
         document.getElementById('view-patient').classList.add('active');
-        document.getElementById('view-title-text').innerText = 'Patient Portal';
+        document.getElementById('view-title-text').innerText = 'Dr. Dhanvantari';
+        updateMobileNavActive('mob-nav-chat');
     } else if (viewName === 'doctor') {
         if (isLiveCallActive) {
             toggleLiveDoctorCall();
@@ -93,6 +112,7 @@ function switchView(viewName) {
         document.getElementById('nav-doctor').classList.add('active');
         document.getElementById('view-doctor').classList.add('active');
         document.getElementById('view-title-text').innerText = 'RMP Doctor Dashboard';
+        updateMobileNavActive('mob-nav-doctor');
         loadDoctorQueue();
     }
 }

@@ -3,8 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <title>Dhanvantari AI Doctor Portal</title>
-    <link rel="stylesheet" href="/static/css/style.css">
+    <!-- Cache-busting v2.5.0 -->
+    <link rel="stylesheet" href="/static/css/style.css?v=2.5.0">
     <!-- Three.js 3D WebGL Library -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
 </head>
@@ -17,45 +20,49 @@
         <!-- Sidebar Navigation (Desktop + Mobile Slideout Drawer) -->
         <aside id="sidebar">
             <div class="brand-section">
-                <div class="brand-icon">D</div>
-                <div class="brand-name">Dhanvantari</div>
+                <div class="brand-badge-wrapper">
+                    <div class="brand-icon">D</div>
+                    <div class="brand-name">Dhanvantari AI</div>
+                </div>
                 <button class="sidebar-close-btn" onclick="toggleMobileSidebar()">&times;</button>
             </div>
             
-            <ul class="nav-menu" style="margin-bottom: 24px;">
+            <ul class="nav-menu">
                 <li class="nav-item active" id="nav-patient" onclick="switchView('patient'); toggleMobileSidebar(false);">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
                     <span>Patient Triage Portal</span>
                 </li>
                 <li class="nav-item" id="nav-doctor" onclick="switchView('doctor'); toggleMobileSidebar(false);">
-                    <span>RMP Doctor Dashboard</span>
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg>
+                    <span>RMP Doctor Review</span>
                 </li>
             </ul>
 
             <!-- Voice Mode Widget -->
             <div class="voice-widget" id="patient-voice-widget">
                 <div class="voice-widget-header">
-                    <span>Voice Triage Mode</span>
+                    <span>Voice Consultation</span>
                     <label class="toggle-container">
                         <input type="checkbox" id="voice-mode-toggle" onchange="toggleVoiceMode(event)">
                         <span class="toggle-slider"></span>
                     </label>
                 </div>
-                <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 8px; font-size: 12px; color: var(--text-muted);">
+                <div class="voice-lang-row">
                     <span>Language / भाषा</span>
-                    <select id="voice-language-select" class="form-control" style="padding: 4px 8px; font-size: 11px; width: 110px; height: auto; border-radius: 6px;" onchange="changeVoiceLanguage(event)">
+                    <select id="voice-language-select" class="voice-select-mini" onchange="changeVoiceLanguage(event)">
                         <option value="en-IN" selected>English</option>
                         <option value="hi-IN">हिन्दी (Hindi)</option>
                     </select>
                 </div>
-                <div class="voice-status-text" style="margin-top: 8px;">
+                <div class="voice-status-text">
                     <span class="voice-status-indicator" id="voice-indicator"></span>
                     <span id="voice-status-label">Voice Off</span>
                 </div>
             </div>
 
             <div class="sidebar-footer">
-                <strong>DPDP Act & Telemedicine Guidelines</strong><br>
-                RMP authentication required for prescriptions. Patient consent required.
+                <strong>DPDP Act & Telemedicine 2020</strong><br>
+                Statutory RMP authorization required for prescriptions. All conversations cryptographically logged.
             </div>
         </aside>
 
@@ -63,21 +70,24 @@
         <main id="main-content">
             <header class="top-header">
                 <div class="header-left">
-                    <button class="mobile-menu-btn" id="btn-mobile-menu" onclick="toggleMobileSidebar()" title="Toggle Menu">
+                    <button class="mobile-menu-btn" id="btn-mobile-menu" onclick="toggleMobileSidebar()" title="Toggle Navigation">
                         <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="18" x2="21" y2="18"></line></svg>
                     </button>
-                    <h1 class="view-title" id="view-title-text">Patient Portal</h1>
+                    <div class="header-title-box">
+                        <h1 class="view-title" id="view-title-text">Dr. Dhanvantari</h1>
+                        <span class="header-online-status"><span class="status-dot"></span> AI Online</span>
+                    </div>
                 </div>
 
                 <div class="header-actions">
                     <button class="btn-live-call" id="btn-toggle-live-call" onclick="toggleLiveDoctorCall()">
                         <span class="pulse-red-dot"></span>
                         <span class="btn-label-desktop">Start 3D Live Doctor Call</span>
-                        <span class="btn-label-mobile">🔴 3D Call</span>
+                        <span class="btn-label-mobile">3D Call</span>
                     </button>
                     <button class="btn-end-prescription" id="btn-open-prescription" onclick="endVisitAndGeneratePrescription()">
-                        <span class="btn-label-desktop">📋 End Visit & Get Prescription</span>
-                        <span class="btn-label-mobile">📋 Get Rx</span>
+                        <span class="btn-label-desktop">📋 End Visit & Get Rx</span>
+                        <span class="btn-label-mobile">📋 Rx</span>
                     </button>
                 </div>
 
@@ -97,10 +107,10 @@
                             <div class="hud-top-bar">
                                 <div class="hud-doctor-tag">
                                     <span class="live-glow-dot"></span>
-                                    <span class="hud-title-text">DR. DHANVANTARI, MD • 3D HOLOGRAPHIC AI DOCTOR</span>
+                                    <span class="hud-title-text">DR. DHANVANTARI • 3D AI DOCTOR</span>
                                 </div>
                                 <div class="hud-model-pill" id="doctor-3d-engine-tag">
-                                    🎙️ VibeVoice 1.5B Active
+                                    🎙️ VibeVoice 1.5B
                                 </div>
                             </div>
 
@@ -116,27 +126,27 @@
                             <div class="stage-controls-bar">
                                 <button class="btn-stage-mic-pulse" id="btn-stage-mic" onclick="toggleStageMic()">
                                     <span id="btn-stage-mic-icon">🎙️</span>
-                                    <span id="btn-stage-mic-label">Listening to You... (Tap to Pause)</span>
+                                    <span id="btn-stage-mic-label">Listening... (Tap to Pause)</span>
                                 </button>
                                 <select id="stage-language-select" class="btn-stage-control" onchange="changeVoiceLanguage(event)">
-                                    <option value="en-IN" selected>English (Indian)</option>
-                                    <option value="hi-IN">हिन्दी (Hindi / VibeVoice)</option>
+                                    <option value="en-IN" selected>English</option>
+                                    <option value="hi-IN">हिन्दी (Hindi)</option>
                                 </select>
                                 <button class="btn-stage-control btn-stage-rx" onclick="endVisitAndGeneratePrescription()">
-                                    📋 End Visit & Get Rx
+                                    📋 Get Rx
                                 </button>
                             </div>
                         </div>
                     </div>
                 </div>
 
-                <!-- Mobile Sub-Navigation Tabs (Switch between Chat & Symptoms on small screens) -->
+                <!-- Mobile Sub-Navigation Tabs -->
                 <div class="mobile-patient-tabs" id="mobile-patient-tab-bar">
                     <button class="mobile-tab-btn active" id="tab-btn-chat" onclick="switchMobilePatientTab('chat')">
                         💬 Consultation Chat
                     </button>
                     <button class="mobile-tab-btn" id="tab-btn-symptoms" onclick="switchMobilePatientTab('symptoms')">
-                        📊 Triage & Symptoms
+                        📊 Triage & Vitals
                     </button>
                 </div>
 
@@ -145,17 +155,25 @@
                     <!-- Left Symptoms Tracker Panel -->
                     <div class="symptoms-panel" id="symptoms-panel-section">
                         <div class="card triage-card">
-                            <h3 class="section-label">Active Triage Level</h3>
+                            <h3 class="section-label">Active Triage Status</h3>
                             <div class="status-badge" id="triage-status-badge">NOT INITIALIZED</div>
                         </div>
 
                         <div class="card">
                             <h3 class="section-label" style="margin-bottom: 12px;">Symptoms Extracted</h3>
                             <div class="symptoms-tracker-list" id="extracted-symptoms-list">
-                                <div style="color: var(--text-muted); font-size: 12px; text-align: center; padding: 10px;">
+                                <div style="color: var(--text-muted); font-size: 12px; text-align: center; padding: 12px;">
                                     Start chatting to extract symptoms.
                                 </div>
                             </div>
+                        </div>
+
+                        <!-- Quick Callout Card -->
+                        <div class="card" style="background: rgba(13, 148, 136, 0.05); border-color: rgba(13, 148, 136, 0.2);">
+                            <h3 class="section-label" style="color: var(--primary);">Clinical Voice Features</h3>
+                            <p style="font-size: 12px; line-height: 1.5; color: var(--text-muted); margin-top: 6px;">
+                                Tap <strong>Start 3D Live Doctor Call</strong> or the microphone icon to speak naturally in Hindi or English.
+                            </p>
                         </div>
                     </div>
 
@@ -165,21 +183,21 @@
                             <!-- Disclaimer Message -->
                             <div class="chat-message assistant">
                                 <div class="message-bubble" style="background: rgba(239, 68, 68, 0.05); border: 1px solid rgba(239, 68, 68, 0.2);">
-                                    <strong>Disclaimer:</strong> This system is a symptom checker and triage tool. It does not provide medical diagnoses. If you have severe symptoms, call emergency services immediately. If you need prescriptions, an RMP must review and sign off.
+                                    <strong>Disclaimer:</strong> This system is a symptom checker and triage tool. It does not provide definitive medical diagnoses. If you have severe emergency symptoms, call 112/108 immediately.
                                 </div>
-                                <div class="message-meta">System Note</div>
+                                <div class="message-meta">System Advisory</div>
                             </div>
                             
                             <div class="chat-message assistant">
                                 <div class="message-bubble">
-                                    Hello, I am Dr. Dhanvantari. How can I help you evaluate your health symptoms today? You can type, attach medical scans, or click **Start 3D Live Doctor Call** to speak with me directly.
+                                    Hello, I am <strong>Dr. Dhanvantari</strong>. How can I help you evaluate your health symptoms today? You can type, attach medical scans/CXR, or tap <strong>3D Call</strong> to speak with me directly.
                                 </div>
                                 <div class="message-meta">Dhanvantari AI</div>
                             </div>
                         </div>
 
                         <!-- Typing Indicator -->
-                        <div class="typing-indicator" id="chat-typing-indicator" style="margin-left: 20px; margin-bottom: 12px;">
+                        <div class="typing-indicator" id="chat-typing-indicator">
                             <div class="typing-dot"></div>
                             <div class="typing-dot"></div>
                             <div class="typing-dot"></div>
@@ -202,9 +220,9 @@
                             <button class="btn-mic" id="btn-chat-mic" onclick="toggleMicRecording()" title="Speak your symptoms">
                                 <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3Z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" x2="12" y1="19" y2="22"/></svg>
                             </button>
-                            <input type="text" class="chat-input" id="chat-user-input" placeholder="Type symptoms or speak..." onkeydown="handleChatKey(event)">
-                            <button class="btn-send" id="chat-send-btn" onclick="sendChatMessage()">
-                                Send
+                            <input type="text" class="chat-input" id="chat-user-input" placeholder="Describe symptoms or tap mic..." onkeydown="handleChatKey(event)">
+                            <button class="btn-send" id="chat-send-btn" onclick="sendChatMessage()" title="Send Message">
+                                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"></line><polygon points="22 2 15 22 11 13 2 9 22 2"></polygon></svg>
                             </button>
                         </div>
                     </div>
@@ -251,12 +269,12 @@
                         </div>
 
                         <div class="form-group">
-                            <label>Medication & Clinical Prescription (Markdown/Text)</label>
-                            <textarea class="form-control" id="form-prescription-text" rows="12"></textarea>
+                            <label>Medication & Clinical Prescription</label>
+                            <textarea class="form-control" id="form-prescription-text" rows="10"></textarea>
                         </div>
 
                         <div class="form-group">
-                            <label>RMP Authorization Signature (Type full name to sign)</label>
+                            <label>RMP Authorization Signature</label>
                             <input type="text" class="form-control" id="form-doctor-signature" placeholder="Dr. Vikram Iyer">
                         </div>
 
@@ -266,6 +284,32 @@
                     </div>
                 </div>
             </section>
+
+            <!-- Mobile Bottom App Bar -->
+            <nav class="mobile-bottom-bar" id="mobile-bottom-bar">
+                <button class="mobile-nav-item active" id="mob-nav-chat" onclick="switchMobileBottomView('chat')">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+                    <span>Chat</span>
+                </button>
+                <button class="mobile-nav-item" id="mob-nav-call" onclick="toggleLiveDoctorCall()">
+                    <div class="mob-call-icon-badge">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+                    </div>
+                    <span>3D Call</span>
+                </button>
+                <button class="mobile-nav-item" id="mob-nav-vitals" onclick="switchMobileBottomView('symptoms')">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg>
+                    <span>Vitals</span>
+                </button>
+                <button class="mobile-nav-item" id="mob-nav-rx" onclick="endVisitAndGeneratePrescription()">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
+                    <span>Rx</span>
+                </button>
+                <button class="mobile-nav-item" id="mob-nav-doctor" onclick="switchView('doctor')">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+                    <span>RMP</span>
+                </button>
+            </nav>
         </main>
     </div>
 
@@ -277,10 +321,10 @@
                     <h2 style="font-family: var(--font-outfit); font-size: 18px;">Digital Medical Prescription</h2>
                     <p style="font-size: 11px; opacity: 0.9; margin-top: 2px;">Dhanvantari Telehealth • Telemedicine Practice Guidelines 2020</p>
                 </div>
-                <button onclick="closePrescriptionModal()" style="background: none; border: none; color: #fff; font-size: 24px; cursor: pointer;">&times;</button>
+                <button onclick="closePrescriptionModal()" class="modal-close-btn">&times;</button>
             </div>
             <div class="prescription-body">
-                <div style="display: flex; justify-content: space-between; align-items: center; background: #f8fafc; padding: 10px 14px; border-radius: 8px; border: 1px solid var(--border-color); font-size: 11px; flex-wrap: wrap; gap: 8px;">
+                <div class="rx-meta-bar">
                     <div>
                         <strong>Patient ID:</strong> <span id="rx-patient-id">PAT-101</span><br>
                         <strong>Date:</strong> <span id="rx-date">16-Aug-2026</span>
@@ -292,14 +336,14 @@
                 </div>
 
                 <div>
-                    <h4 style="font-family: var(--font-outfit); font-size: 12px; color: var(--text-muted); text-transform: uppercase; margin-bottom: 4px;">Primary Clinical Diagnosis</h4>
-                    <div style="font-size: 14px; font-weight: 600; color: var(--text-main);" id="rx-diagnosis-text">
+                    <h4 class="rx-field-label">Primary Clinical Diagnosis</h4>
+                    <div class="rx-diagnosis-box" id="rx-diagnosis-text">
                         Acute Febrile Presentation (ICD-10: R50.9)
                     </div>
                 </div>
 
                 <div>
-                    <h4 style="font-family: var(--font-outfit); font-size: 12px; color: var(--text-muted); text-transform: uppercase; margin-bottom: 6px;">Rx - Prescribed Medications (NLEM Grounded)</h4>
+                    <h4 class="rx-field-label">Rx - Prescribed Medications (NLEM Grounded)</h4>
                     <div style="overflow-x: auto;">
                         <table class="rx-med-table">
                             <thead>
@@ -317,13 +361,13 @@
                 </div>
 
                 <div>
-                    <h4 style="font-family: var(--font-outfit); font-size: 12px; color: var(--text-muted); text-transform: uppercase; margin-bottom: 4px;">Clinical Advice & Hydration</h4>
-                    <ul id="rx-advice-list" style="font-size: 12px; line-height: 1.5; padding-left: 18px; color: var(--text-main);">
+                    <h4 class="rx-field-label">Clinical Advice & Hydration</h4>
+                    <ul id="rx-advice-list" class="rx-advice-items">
                         <!-- Populated dynamically -->
                     </ul>
                 </div>
 
-                <div style="background: rgba(239, 68, 68, 0.05); border: 1px dashed rgba(239, 68, 68, 0.3); padding: 8px 12px; border-radius: 8px; font-size: 10px; color: var(--text-muted);">
+                <div class="rx-disclaimer-box">
                     ⚠️ <strong>Telemedicine Compliance:</strong> This electronic prescription is pre-generated under clinical supervision. In compliance with the Telemedicine Guidelines 2020 (India), no Schedule X drugs are permitted.
                 </div>
             </div>
@@ -337,7 +381,7 @@
         </div>
     </div>
 
-    <!-- DPDP CONSENT MODAL (Shows on page load) -->
+    <!-- DPDP CONSENT MODAL -->
     <div class="modal-overlay" id="consent-modal-overlay">
         <div class="consent-modal">
             <div class="consent-header">
@@ -351,12 +395,12 @@
                 <br><br>
                 <strong>Important Constraints:</strong><br>
                 1. <strong>Triage Only:</strong> This AI acts as a triage assistant.
-                2. <strong>RMP Loop:</strong> Prescriptions drafted by the AI have no legal authorization until reviewed, finalized, and electronically signed by a Registered Medical Practitioner (RMP).
-                3. <strong>Data Erasure:</strong> You retain the right to request deletion of your health consultations under DPDP regulations.
+                2. <strong>RMP Loop:</strong> Prescriptions drafted by the AI have no legal authorization until reviewed and electronically signed by an RMP.
+                3. <strong>Data Erasure:</strong> You retain the right to request deletion of your health records under DPDP regulations.
             </div>
 
             <div class="form-group">
-                <label>Enter Patient Email (used to record consent and tracking ID)</label>
+                <label>Enter Patient Email</label>
                 <input type="email" class="form-control" id="consent-patient-email" placeholder="patient@example.com" value="test-patient@gmail.com">
             </div>
 
@@ -372,8 +416,8 @@
     <!-- Toast Notifications -->
     <div class="toast-container" id="toast-container"></div>
 
-    <!-- Scripts -->
-    <script src="/static/js/visualizer3d.js"></script>
-    <script src="/static/js/app.js"></script>
+    <!-- Scripts with Cache-busting v2.5.0 -->
+    <script src="/static/js/visualizer3d.js?v=2.5.0"></script>
+    <script src="/static/js/app.js?v=2.5.0"></script>
 </body>
 </html>
