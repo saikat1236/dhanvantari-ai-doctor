@@ -555,6 +555,17 @@ const BODY_REGIONS_DATA = {
             "Painful night calf muscle cramps",
             "Burning tingling sensation under soles (Neuropathy)"
         ]
+    },
+    whole_body: {
+        title: "🩸 Full Body & Constitutional (पूरा शरीर / बुखार)",
+        subtitle: "Systemic, Fever & Constitutional Symptoms:",
+        chips: [
+            "High fever of 102°F+ with shivering and chills (तेज़ बुखार)",
+            "Severe generalized body ache & fatigue (पूरे शरीर में दर्द)",
+            "Extreme weakness & dizziness when standing up",
+            "Widespread itchy skin rash or hives",
+            "Loss of appetite & extreme dehydration"
+        ]
     }
 };
 
@@ -576,24 +587,45 @@ function closeBodyMapModal() {
 function selectBodyRegion(regionKey) {
     currentSelectedRegion = regionKey;
     
-    // Highlight SVG parts
+    // 1. Sync Region Pill Buttons
+    document.querySelectorAll('.btn-region-pill').forEach(pill => {
+        pill.classList.remove('active');
+    });
+    const activePill = document.getElementById(`pill-${regionKey}`);
+    if (activePill) {
+        activePill.classList.add('active');
+        activePill.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
+    }
+
+    // 2. Clear previous SVG selections
     document.querySelectorAll('.body-part').forEach(p => p.classList.remove('selected'));
-    
-    if (regionKey === 'arms') {
+    document.querySelectorAll('.body-touch-group').forEach(g => g.classList.remove('selected'));
+
+    // 3. Highlight selected SVG group / paths
+    if (regionKey === 'whole_body') {
+        document.querySelectorAll('.body-part').forEach(p => p.classList.add('selected'));
+    } else if (regionKey === 'arms') {
         const la = document.getElementById('part-left-arm');
         const ra = document.getElementById('part-right-arm');
+        const ga = document.getElementById('zone-arms');
         if (la) la.classList.add('selected');
         if (ra) ra.classList.add('selected');
+        if (ga) ga.classList.add('selected');
     } else if (regionKey === 'legs') {
         const ll = document.getElementById('part-left-leg');
         const rl = document.getElementById('part-right-leg');
+        const gl = document.getElementById('zone-legs');
         if (ll) ll.classList.add('selected');
         if (rl) rl.classList.add('selected');
+        if (gl) gl.classList.add('selected');
     } else {
         const part = document.getElementById(`part-${regionKey}`);
+        const grp = document.getElementById(`zone-${regionKey}`);
         if (part) part.classList.add('selected');
+        if (grp) grp.classList.add('selected');
     }
 
+    // 4. Populate Symptom Chips
     const regData = BODY_REGIONS_DATA[regionKey] || BODY_REGIONS_DATA.head;
     const titleEl = document.getElementById('selected-region-title');
     const subEl = document.getElementById('selected-region-subtitle');
@@ -611,6 +643,11 @@ function selectBodyRegion(regionKey) {
             btn.onclick = () => quickSymptomFromMap(chipText, regData.title);
             chipsContainer.appendChild(btn);
         });
+    }
+
+    // Gentle haptic feedback on mobile devices
+    if ("vibrate" in navigator) {
+        try { navigator.vibrate(25); } catch (e) {}
     }
 }
 

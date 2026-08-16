@@ -6,8 +6,8 @@
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <title>Dhanvantari AI Doctor Portal</title>
-    <!-- Cache-busting v3.0.0 -->
-    <link rel="stylesheet" href="/static/css/style.css?v=3.0.0">
+    <!-- Cache-busting v3.5.0 -->
+    <link rel="stylesheet" href="/static/css/style.css?v=3.5.0">
     <!-- Three.js 3D WebGL Library -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
 </head>
@@ -369,46 +369,72 @@
             <div class="body-map-header">
                 <div>
                     <h2 style="font-family: var(--font-outfit); font-size: 18px; color: var(--text-main);">📍 Visual Body Pain Map</h2>
-                    <p style="font-size: 12px; color: var(--text-muted);">Point & tap where you feel pain or discomfort (शरीर पर दर्द की जगह चुनें)</p>
+                    <p style="font-size: 12px; color: var(--text-muted);">Tap a body part or button to pick symptoms (शरीर पर दर्द की जगह चुनें)</p>
                 </div>
                 <button onclick="closeBodyMapModal()" class="modal-close-btn-dark">&times;</button>
+            </div>
+
+            <!-- Quick Region Selector Buttons (Ensures 100% 1-tap usability on any screen) -->
+            <div class="body-parts-quick-grid">
+                <button class="btn-region-pill active" id="pill-head" onclick="selectBodyRegion('head')">🧠 Head (सिर)</button>
+                <button class="btn-region-pill" id="pill-throat" onclick="selectBodyRegion('throat')">👁️ Throat/ENT (गला)</button>
+                <button class="btn-region-pill" id="pill-chest" onclick="selectBodyRegion('chest')">🫁 Chest/Heart (छाती)</button>
+                <button class="btn-region-pill" id="pill-abdomen" onclick="selectBodyRegion('abdomen')">🫄 Stomach (पेट)</button>
+                <button class="btn-region-pill" id="pill-pelvis" onclick="selectBodyRegion('pelvis')">🦴 Pelvis/Back (कमर)</button>
+                <button class="btn-region-pill" id="pill-arms" onclick="selectBodyRegion('arms')">💪 Arms/Hands (हाथ)</button>
+                <button class="btn-region-pill" id="pill-legs" onclick="selectBodyRegion('legs')">🦵 Legs/Knees (पैर)</button>
+                <button class="btn-region-pill" id="pill-whole_body" onclick="selectBodyRegion('whole_body')">🩸 Full Body (बुखार)</button>
             </div>
 
             <div class="body-map-content">
                 <!-- Interactive Anatomical Body Diagram -->
                 <div class="body-diagram-container">
-                    <svg viewBox="0 0 200 400" class="human-body-svg">
-                        <!-- Head / Brain -->
-                        <circle cx="100" cy="40" r="24" class="body-part" id="part-head" onclick="selectBodyRegion('head')" />
-                        <text x="100" y="44" class="body-part-label">🧠 Head</text>
+                    <svg viewBox="0 0 200 400" class="human-body-svg" id="body-map-svg">
+                        <!-- Head / Brain Group -->
+                        <g class="body-touch-group" id="zone-head" onclick="selectBodyRegion('head')">
+                            <circle cx="100" cy="40" r="26" class="body-part" id="part-head" />
+                            <text x="100" y="44" class="body-part-label">🧠 Head</text>
+                        </g>
 
-                        <!-- Neck / Throat -->
-                        <rect x="90" y="66" width="20" height="14" rx="4" class="body-part" id="part-throat" onclick="selectBodyRegion('throat')" />
-                        <text x="100" y="76" class="body-part-label" style="font-size: 7px;">Throat</text>
+                        <!-- Neck / Throat Group -->
+                        <g class="body-touch-group" id="zone-throat" onclick="selectBodyRegion('throat')">
+                            <rect x="85" y="66" width="30" height="15" rx="5" class="body-part" id="part-throat" />
+                            <text x="100" y="77" class="body-part-label" style="font-size: 7.5px;">Throat</text>
+                        </g>
 
-                        <!-- Chest / Heart & Lungs -->
-                        <path d="M 65 82 Q 100 78 135 82 L 130 140 Q 100 145 70 140 Z" class="body-part" id="part-chest" onclick="selectBodyRegion('chest')" />
-                        <text x="100" y="112" class="body-part-label">🫁 Chest / Heart</text>
+                        <!-- Chest / Heart & Lungs Group -->
+                        <g class="body-touch-group" id="zone-chest" onclick="selectBodyRegion('chest')">
+                            <path d="M 60 84 Q 100 80 140 84 L 134 140 Q 100 145 66 140 Z" class="body-part" id="part-chest" />
+                            <text x="100" y="112" class="body-part-label">🫁 Chest / Heart</text>
+                        </g>
 
-                        <!-- Abdomen / Stomach -->
-                        <path d="M 70 142 Q 100 145 130 142 L 126 195 Q 100 200 74 195 Z" class="body-part" id="part-abdomen" onclick="selectBodyRegion('abdomen')" />
-                        <text x="100" y="170" class="body-part-label">🫄 Stomach</text>
+                        <!-- Abdomen / Stomach Group -->
+                        <g class="body-touch-group" id="zone-abdomen" onclick="selectBodyRegion('abdomen')">
+                            <path d="M 66 142 Q 100 146 134 142 L 128 196 Q 100 202 72 196 Z" class="body-part" id="part-abdomen" />
+                            <text x="100" y="170" class="body-part-label">🫄 Stomach</text>
+                        </g>
 
-                        <!-- Pelvis / Urinary -->
-                        <path d="M 74 197 Q 100 200 126 197 L 132 230 Q 100 236 68 230 Z" class="body-part" id="part-pelvis" onclick="selectBodyRegion('pelvis')" />
-                        <text x="100" y="217" class="body-part-label" style="font-size: 7.5px;">Pelvis / Urinary</text>
+                        <!-- Pelvis / Urinary Group -->
+                        <g class="body-touch-group" id="zone-pelvis" onclick="selectBodyRegion('pelvis')">
+                            <path d="M 72 198 Q 100 202 128 198 L 134 232 Q 100 238 66 232 Z" class="body-part" id="part-pelvis" />
+                            <text x="100" y="218" class="body-part-label" style="font-size: 8px;">Pelvis / Back</text>
+                        </g>
 
                         <!-- Left & Right Arms -->
-                        <path d="M 62 85 L 35 160 L 25 220 L 38 222 L 48 165 L 68 100 Z" class="body-part" id="part-left-arm" onclick="selectBodyRegion('arms')" />
-                        <path d="M 138 85 L 165 160 L 175 220 L 162 222 L 152 165 L 132 100 Z" class="body-part" id="part-right-arm" onclick="selectBodyRegion('arms')" />
-                        <text x="32" y="150" class="body-part-label" style="font-size: 7px;">Arm</text>
-                        <text x="168" y="150" class="body-part-label" style="font-size: 7px;">Arm</text>
+                        <g class="body-touch-group" id="zone-arms" onclick="selectBodyRegion('arms')">
+                            <path d="M 58 86 L 32 160 L 22 220 L 36 222 L 46 165 L 64 100 Z" class="body-part" id="part-left-arm" />
+                            <path d="M 142 86 L 168 160 L 178 220 L 164 222 L 154 165 L 136 100 Z" class="body-part" id="part-right-arm" />
+                            <text x="32" y="150" class="body-part-label" style="font-size: 7.5px;">Arm</text>
+                            <text x="168" y="150" class="body-part-label" style="font-size: 7.5px;">Arm</text>
+                        </g>
 
                         <!-- Left & Right Legs / Knees -->
-                        <path d="M 72 232 L 68 310 L 62 380 L 80 380 L 88 310 L 96 235 Z" class="body-part" id="part-left-leg" onclick="selectBodyRegion('legs')" />
-                        <path d="M 128 232 L 132 310 L 138 380 L 120 380 L 112 310 L 104 235 Z" class="body-part" id="part-right-leg" onclick="selectBodyRegion('legs')" />
-                        <text x="76" y="305" class="body-part-label" style="font-size: 8px;">🦵 Leg</text>
-                        <text x="124" y="305" class="body-part-label" style="font-size: 8px;">🦵 Leg</text>
+                        <g class="body-touch-group" id="zone-legs" onclick="selectBodyRegion('legs')">
+                            <path d="M 70 234 L 66 310 L 60 380 L 80 380 L 88 310 L 96 237 Z" class="body-part" id="part-left-leg" />
+                            <path d="M 130 234 L 134 310 L 140 380 L 120 380 L 112 310 L 104 237 Z" class="body-part" id="part-right-leg" />
+                            <text x="76" y="305" class="body-part-label" style="font-size: 8px;">🦵 Leg</text>
+                            <text x="124" y="305" class="body-part-label" style="font-size: 8px;">🦵 Leg</text>
+                        </g>
                     </svg>
                 </div>
 
@@ -416,7 +442,7 @@
                 <div class="body-region-details" id="body-region-details-pane">
                     <div class="region-header">
                         <span class="region-title" id="selected-region-title">🧠 Head & Brain (सिर)</span>
-                        <span class="region-subtitle" id="selected-region-subtitle">Tap a symptom below to add to consultation:</span>
+                        <span class="region-subtitle" id="selected-region-subtitle">Tap a symptom below to immediately consult doctor:</span>
                     </div>
 
                     <div class="region-symptom-chips" id="region-symptom-chips-container">
@@ -597,8 +623,8 @@
     <!-- Toast Notifications -->
     <div class="toast-container" id="toast-container"></div>
 
-    <!-- Scripts with Cache-busting v3.0.0 -->
-    <script src="/static/js/visualizer3d.js?v=3.0.0"></script>
-    <script src="/static/js/app.js?v=3.0.0"></script>
+    <!-- Scripts with Cache-busting v3.5.0 -->
+    <script src="/static/js/visualizer3d.js?v=3.5.0"></script>
+    <script src="/static/js/app.js?v=3.5.0"></script>
 </body>
 </html>
