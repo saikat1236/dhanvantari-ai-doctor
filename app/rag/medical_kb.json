@@ -1,0 +1,244 @@
+[
+  {
+    "condition": "Acute Chest Pain / Angina",
+    "icd10": "I20.9",
+    "symptoms": ["chest pain", "crushing pain", "chest pressure", "radiating arm pain", "left arm pain", "jaw pain", "angina", "chhati me dard", "dil me dard"],
+    "triage_level": "emergency",
+    "differential_candidates": [
+      {"condition": "Acute Coronary Syndrome / MI", "confidence": "High", "differentiator": "Crushing retrosternal pressure, diaphoresis, radiating to left arm/jaw"},
+      {"condition": "Gastroesophageal Reflux Disease (GERD)", "confidence": "Medium", "differentiator": "Burning sensation after meals, relieved by antacids, no radiation"},
+      {"condition": "Costochondritis / Musculoskeletal", "confidence": "Low", "differentiator": "Reproducible on chest wall palpation, exacerbated by deep inspiration"}
+    ],
+    "recommended_investigations": [
+      "12-Lead Electrocardiogram (ECG) immediately",
+      "Serum Cardiac Troponin-I / Troponin-T",
+      "Echocardiography (2D Echo)",
+      "Chest X-Ray (PA View)"
+    ],
+    "formulary_guidelines": [
+      {
+        "molecule": "Aspirin (Dispersible)",
+        "nlem_status": "Listed in NLEM",
+        "standard_dose": "300 mg chewed/dispersed once as emergency first-aid loading dose",
+        "contraindications": "Active GI bleeding, known hypersensitivity to salicylates",
+        "telemedicine_status": "Emergency loading dose pending physical hospital transfer"
+      },
+      {
+        "molecule": "Sorbitrate (Isosorbide Dinitrate)",
+        "nlem_status": "Listed in NLEM",
+        "standard_dose": "5 mg sublingually if systolic BP > 100 mmHg",
+        "contraindications": "Hypotension (SBP < 90), concurrent use with PDE-5 inhibitors",
+        "telemedicine_status": "Emergency protocol only"
+      }
+    ],
+    "guidelines": "POSSIBLE MYOCARDIAL INFARCTION OR CARDIOVASCULAR EMERGENCY. TIME IS MUSCLE. DO NOT DELAY.",
+    "action_plan": "1. Administer emergency medical services immediately. Call 108 or 112 (India).\n2. Keep patient calm, seated, or in a half-reclined position.\n3. Assist with emergency dispersible aspirin (300mg) if advised by emergency dispatch and no contraindication.\n4. Prepare for immediate transfer to a cardiac catheterization center."
+  },
+  {
+    "condition": "Acute Respiratory Distress / Breathlessness",
+    "icd10": "R06.0",
+    "symptoms": ["breathlessness", "shortness of breath", "gasping", "cant breathe", "wheezing", "suffocation", "saans lene me takleef", "dam ghutna"],
+    "triage_level": "emergency",
+    "differential_candidates": [
+      {"condition": "Acute Exacerbation of Bronchial Asthma", "confidence": "High", "differentiator": "Expiratory wheezing, history of atopy/allergies"},
+      {"condition": "Acute Pulmonary Embolism", "confidence": "Medium", "differentiator": "Sudden onset, pleuritic chest pain, tachycardia, DVT history"},
+      {"condition": "Pneumothorax", "confidence": "Low", "differentiator": "Unilateral chest pain, absent breath sounds on affected side"}
+    ],
+    "recommended_investigations": [
+      "Pulse Oximetry (Continuous SpO2 monitoring)",
+      "Arterial Blood Gas (ABG) analysis",
+      "Chest X-Ray (PA View)",
+      "Peak Expiratory Flow Rate (PEFR)"
+    ],
+    "formulary_guidelines": [
+      {
+        "molecule": "Salbutamol Inhaler (MDI)",
+        "nlem_status": "Listed in NLEM",
+        "standard_dose": "100 mcg per puff; 2-4 puffs via spacer every 20 minutes as rescue for acute bronchospasm",
+        "contraindications": "Severe hypersensitivity, unstable cardiac arrhythmias",
+        "telemedicine_status": "List A (Permissible OTC/First Aid continuation)"
+      }
+    ],
+    "guidelines": "ACUTE BREATHING EMERGENCY. RISK OF RESPIRATORY FAILURE.",
+    "action_plan": "1. Call ambulance services (108 / 112) immediately.\n2. Keep patient sitting upright; loosen restrictive clothing.\n3. Administer rescue bronchodilator (Salbutamol 2-4 puffs) if diagnosed with asthma.\n4. Keep supplemental oxygen ready if available."
+  },
+  {
+    "condition": "Acute Stroke Symptoms",
+    "icd10": "I63.9",
+    "symptoms": ["stroke", "face drooping", "slurred speech", "numbness one side", "weakness one side", "hemiparesis", "lakwa", "bolne me takleef"],
+    "triage_level": "emergency",
+    "differential_candidates": [
+      {"condition": "Acute Ischemic Stroke", "confidence": "High", "differentiator": "Sudden focal neurological deficit, unilateral weakness, slurred speech"},
+      {"condition": "Intracranial Hemorrhage", "confidence": "Medium", "differentiator": "Sudden severe 'thunderclap' headache, vomiting, rapid loss of consciousness"},
+      {"condition": "Transient Ischemic Attack (TIA)", "confidence": "Low", "differentiator": "Focal symptoms resolving completely within 24 hours"}
+    ],
+    "recommended_investigations": [
+      "Non-Contrast CT Brain (NCCT Head) immediately (<20 min door-to-CT)",
+      "Blood Glucose (Rule out severe hypoglycemia mimicking stroke)",
+      "MRI Brain with DWI (Diffusion-Weighted Imaging)",
+      "Coagulation Profile (PT/INR, APTT)"
+    ],
+    "formulary_guidelines": [],
+    "guidelines": "ACUTE STROKE ALERT. TIME IS BRAIN. THROMBOLYSIS WINDOW (<4.5 HOURS).",
+    "action_plan": "1. Call 108 / 112 immediately. Note exact time of symptom onset.\n2. Check FAST: Face drooping, Arm weakness, Speech difficulty, Time to call.\n3. Do NOT administer any food, water, or aspirin orally (choking/hemorrhage risk).\n4. Position patient in recovery position if consciousness is decreased."
+  },
+  {
+    "condition": "Acute Severe Bleeding / Trauma",
+    "icd10": "R58",
+    "symptoms": ["bleeding", "heavy bleeding", "gushing blood", "arterial bleed", "hemorrhage", "khoon behna", "chot lagna"],
+    "triage_level": "emergency",
+    "differential_candidates": [
+      {"condition": "Arterial Hemorrhage", "confidence": "High", "differentiator": "Pulsatile bright red blood spurt"},
+      {"condition": "Venous Bleed", "confidence": "Medium", "differentiator": "Continuous dark red blood flow"}
+    ],
+    "recommended_investigations": [
+      "Complete Blood Count (CBC) with Hematocrit/Hemoglobin",
+      "Blood Grouping & Cross-matching",
+      "Coagulation Profile"
+    ],
+    "formulary_guidelines": [],
+    "guidelines": "SEVERE HEMORRHAGE. IMMEDIATE RISK OF HYPOVOLEMIC SHOCK.",
+    "action_plan": "1. Apply firm, continuous direct pressure with sterile pad.\n2. Elevate bleeding site above heart level.\n3. Call 108 / 112 emergency services.\n4. Keep patient warm to avoid hypothermia."
+  },
+  {
+    "condition": "Fever / Acute Febrile Illness",
+    "icd10": "R50.9",
+    "symptoms": ["fever", "high temperature", "chills", "sweating", "hot body", "pyrexia", "bukhar", "badan dard", "thandi lagna"],
+    "triage_level": "self_care",
+    "differential_candidates": [
+      {"condition": "Acute Viral Febrile Illness / URI", "confidence": "High", "differentiator": "Fever with mild coryza, body aches, no localizing signs"},
+      {"condition": "Dengue Fever", "confidence": "Medium", "differentiator": "Retro-orbital headache, severe arthralgia ('breakbone'), petechial rash"},
+      {"condition": "Malaria", "confidence": "Low", "differentiator": "Periodic chills, rigors, and sweating spikes, endemic travel history"}
+    ],
+    "recommended_investigations": [
+      "Complete Blood Count (CBC) with Differential and Platelet Count",
+      "Dengue NS1 Antigen (if fever < 5 days) / IgM (if > 5 days)",
+      "Malaria Rapid Diagnostic Test (RDT) / Peripheral Blood Smear",
+      "Urine Routine & Microscopy (if urinary symptoms present)"
+    ],
+    "formulary_guidelines": [
+      {
+        "molecule": "Paracetamol (Acetaminophen)",
+        "nlem_status": "Listed in NLEM",
+        "standard_dose": "500 mg - 650 mg orally every 6-8 hours as needed (Maximum 3000 mg/day)",
+        "contraindications": "Severe hepatic impairment, active acute liver disease",
+        "telemedicine_status": "List A (Permissible for all telemedicine consultations)"
+      },
+      {
+        "molecule": "Oral Rehydration Salts (ORS)",
+        "nlem_status": "Listed in NLEM (WHO Formula)",
+        "standard_dose": "1 sachet dissolved in 1 litre of clean drinking water; sip frequently",
+        "contraindications": "Severe intractable vomiting, dynamic intestinal obstruction",
+        "telemedicine_status": "List A (Permissible OTC)"
+      }
+    ],
+    "guidelines": "EVALUATE FEVER PATTERN, HYDRATION, AND WARNING SIGNS.",
+    "action_plan": "1. Maintain hydration (ORS, coconut water, water).\n2. Lukewarm water sponging for high temperature.\n3. Paracetamol 500-650mg for symptom relief (max 3-4 times daily).\n4. Seek immediate doctor visit if fever > 103°F (39.4°C), lasts >3 days, or if rash, petechiae, or severe vomiting occurs."
+  },
+  {
+    "condition": "Acute Cough / Bronchitis",
+    "icd10": "R05",
+    "symptoms": ["cough", "throat irritation", "dry cough", "wet cough", "phlegm", "bronchitis", "khansi", "balgam", "sukhi khansi"],
+    "triage_level": "self_care",
+    "differential_candidates": [
+      {"condition": "Acute Viral Bronchitis", "confidence": "High", "differentiator": "Self-limiting cough, clear/white phlegm, no focal crackles on auscultation"},
+      {"condition": "Upper Airway Cough Syndrome (Post-Nasal Drip)", "confidence": "Medium", "differentiator": "Throat clearing, sensation of mucus dripping down posterior pharynx"},
+      {"condition": "Community-Acquired Pneumonia", "confidence": "Low", "differentiator": "High fever, rust-colored or purulent sputum, pleuritic chest pain, tachypnea"}
+    ],
+    "recommended_investigations": [
+      "Chest X-Ray (PA View) if cough persists > 2 weeks or with fever/hemoptysis",
+      "Complete Blood Count (CBC) with ESR"
+    ],
+    "formulary_guidelines": [
+      {
+        "molecule": "Warm Saline Gargles & Steam Inhalation",
+        "nlem_status": "Non-pharmacological standard of care",
+        "standard_dose": "Inhale steam 2-3 times daily; warm saline gargles every 4 hours",
+        "contraindications": "None",
+        "telemedicine_status": "Non-pharmacological"
+      },
+      {
+        "molecule": "Dextromethorphan Syrup (for dry bothersome cough)",
+        "nlem_status": "Listed in NLEM",
+        "standard_dose": "10 mg - 20 mg (5-10 ml) orally every 6-8 hours",
+        "contraindications": "Productive wet cough (do not suppress sputum), concurrent MAOI use",
+        "telemedicine_status": "List A (Permissible OTC)"
+      }
+    ],
+    "guidelines": "SUPPORTIVE CARE FOR ACUTE VIRAL BRONCHITIS. AVOID EMPIRIC ANTIBIOTICS.",
+    "action_plan": "1. Steam inhalation and warm fluids (ginger-honey water).\n2. Warm saline gargles to relieve airway sensitivity.\n3. Avoid dusty/smoky environments.\n4. Consult a doctor if cough lasts > 2 weeks, produces blood, or causes shortness of breath."
+  },
+  {
+    "condition": "Gastroenteritis / Acute Diarrhea / Stomach Pain",
+    "icd10": "K52.9",
+    "symptoms": ["stomach pain", "diarrhea", "loose motions", "vomiting", "nausea", "belly ache", "pet dard", "dast", "ulti", "pet kharab"],
+    "triage_level": "see_doctor_soon",
+    "differential_candidates": [
+      {"condition": "Acute Viral/Bacterial Gastroenteritis", "confidence": "High", "differentiator": "Watery loose stools, nausea, cramping, low-grade fever"},
+      {"condition": "Acid Peptic Disease / Gastritis", "confidence": "Medium", "differentiator": "Epigastric burning, aggravated on empty stomach"},
+      {"condition": "Acute Appendicitis", "confidence": "Low", "differentiator": "Initial periumbilical pain migrating to Right Lower Quadrant with McBurney tenderness"}
+    ],
+    "recommended_investigations": [
+      "Stool Routine & Microscopy (check for RBCs, pus cells, ova/cysts)",
+      "Serum Electrolytes (Sodium, Potassium, Chloride)",
+      "Ultrasound Whole Abdomen (if localized severe right lower quadrant pain)"
+    ],
+    "formulary_guidelines": [
+      {
+        "molecule": "Oral Rehydration Salts (WHO-ORS)",
+        "nlem_status": "Listed in NLEM",
+        "standard_dose": "200-400 ml after each loose stool to prevent dehydration",
+        "contraindications": "Intractable vomiting, severe paralytic ileus",
+        "telemedicine_status": "List A (Permissible OTC)"
+      },
+      {
+        "molecule": "Zinc Sulfate Tablets (for pediatric/acute diarrhea)",
+        "nlem_status": "Listed in NLEM",
+        "standard_dose": "20 mg daily for 14 days (Adults/Older children)",
+        "contraindications": "Hypersensitivity",
+        "telemedicine_status": "List A (Permissible OTC)"
+      },
+      {
+        "molecule": "Pantoprazole / Omeprazole",
+        "nlem_status": "Listed in NLEM",
+        "standard_dose": "40 mg orally once daily 30 minutes before breakfast for gastritis/acidity",
+        "contraindications": "Known hypersensitivity to PPIs",
+        "telemedicine_status": "List A (Permissible OTC)"
+      }
+    ],
+    "guidelines": "PREVENT DEHYDRATION FIRST. DO NOT PRESCRIBE EMPIRIC ANTIBIOTICS FOR UNCOMPLICATED DIARRHEA.",
+    "action_plan": "1. Aggressive oral rehydration with WHO-ORS solution.\n2. Bland diet (Khichdi, bananas, boiled potatoes, toast).\n3. Avoid self-prescribed antimicrobials or antimotility drugs (like Loperamide) in fever/bloody stool.\n4. Consult a doctor promptly if signs of dehydration, high fever, or severe right-side abdominal pain develop."
+  },
+  {
+    "condition": "Sore Throat / Acute Pharyngitis",
+    "icd10": "J02.9",
+    "symptoms": ["sore throat", "pain swallowing", "tonsillitis", "pharyngitis", "throat pain", "gale me dard", "nigalne me takleef"],
+    "triage_level": "self_care",
+    "differential_candidates": [
+      {"condition": "Viral Pharyngitis", "confidence": "High", "differentiator": "Associated cough, rhinorrhea, conjunctivitis, mild pharyngeal erythema"},
+      {"condition": "Group A Streptococcal (GAS) Pharyngitis", "confidence": "Medium", "differentiator": "Centor criteria: fever, tonsillar exudates, tender anterior cervical adenopathy, NO cough"}
+    ],
+    "recommended_investigations": [
+      "Rapid Antigen Detection Test (RADT) for Group A Strep (if Centor score >= 3)",
+      "Throat Swab Culture"
+    ],
+    "formulary_guidelines": [
+      {
+        "molecule": "Warm Saline Gargle",
+        "nlem_status": "Standard of Care",
+        "standard_dose": "1/2 tsp salt in 200 ml warm water; gargle 4 times daily",
+        "contraindications": "None",
+        "telemedicine_status": "Non-pharmacological"
+      },
+      {
+        "molecule": "Paracetamol",
+        "nlem_status": "Listed in NLEM",
+        "standard_dose": "500 mg orally every 8 hours as needed for throat pain",
+        "contraindications": "Severe liver disease",
+        "telemedicine_status": "List A (Permissible OTC)"
+      }
+    ],
+    "guidelines": "SYMPTOMATIC RELIEF FOR VIRAL PHARYNGITIS. EVALUATE CENTOR CRITERIA FOR BACTERIAL STREP.",
+    "action_plan": "1. Warm saline gargles every 3-4 hours.\n2. Lozenges and warm fluids.\n3. Paracetamol for throat pain.\n4. Consult doctor if unable to swallow liquids, breathing difficulty, or white patches on tonsils appear."
+  }
+]

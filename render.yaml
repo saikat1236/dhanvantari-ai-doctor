@@ -1,0 +1,22 @@
+services:
+  - type: web
+    name: dhanvantari-ai-doctor
+    runtime: docker
+    plan: free
+    region: oregon
+    dockerfilePath: ./Dockerfile
+    autoDeploy: true
+    healthCheckPath: /
+    envVars:
+      - key: GROQ_API_KEY
+        sync: false
+      - key: GROQ_MODEL_NAME
+        value: llama-3.3-70b-versatile
+      - key: OPENROUTER_API_KEY
+        sync: false
+      - key: OPENROUTER_MODEL_NAME
+        value: deepseek/deepseek-r1
+      - key: HF_TOKEN
+        sync: false
+      - key: VIBEVOICE_MODEL_ID
+        value: tarun7r/vibevoice-hindi-1.5B

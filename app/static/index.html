@@ -1,0 +1,354 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dhanvantari AI Doctor Portal</title>
+    <link rel="stylesheet" href="/static/css/style.css">
+    <!-- Three.js 3D WebGL Library -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+</head>
+<body>
+
+    <div id="app-layout">
+        <!-- Sidebar Navigation -->
+        <aside id="sidebar">
+            <div class="brand-section">
+                <div class="brand-icon">D</div>
+                <div class="brand-name">Dhanvantari</div>
+            </div>
+            
+            <ul class="nav-menu" style="margin-bottom: 24px;">
+                <li class="nav-item active" id="nav-patient" onclick="switchView('patient')">
+                    <span>Patient Triage Portal</span>
+                </li>
+                <li class="nav-item" id="nav-doctor" onclick="switchView('doctor')">
+                    <span>RMP Doctor Dashboard</span>
+                </li>
+            </ul>
+
+            <!-- Voice Mode Widget -->
+            <div class="voice-widget" id="patient-voice-widget">
+                <div class="voice-widget-header">
+                    <span>Voice Triage Mode</span>
+                    <label class="toggle-container">
+                        <input type="checkbox" id="voice-mode-toggle" onchange="toggleVoiceMode(event)">
+                        <span class="toggle-slider"></span>
+                    </label>
+                </div>
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 8px; font-size: 12px; color: var(--text-muted);">
+                    <span>Language / भाषा</span>
+                    <select id="voice-language-select" class="form-control" style="padding: 4px 8px; font-size: 11px; width: 110px; height: auto; border-radius: 6px;" onchange="changeVoiceLanguage(event)">
+                        <option value="en-IN" selected>English</option>
+                        <option value="hi-IN">हिन्दी (Hindi)</option>
+                    </select>
+                </div>
+                <div class="voice-status-text" style="margin-top: 8px;">
+                    <span class="voice-status-indicator" id="voice-indicator"></span>
+                    <span id="voice-status-label">Voice Off</span>
+                </div>
+            </div>
+
+            <div class="sidebar-footer">
+                <strong>DPDP Act & Telemedicine Guidelines</strong><br>
+                RMP authentication required for prescriptions. Patient consent required.
+            </div>
+        </aside>
+
+        <!-- Main Workspace -->
+        <main id="main-content">
+            <header class="top-header">
+                <div style="display: flex; align-items: center; gap: 14px;">
+                    <h1 class="view-title" id="view-title-text">Patient Triage Portal</h1>
+                    <button class="btn-live-call" id="btn-toggle-live-call" onclick="toggleLiveDoctorCall()">
+                        <span class="pulse-red-dot"></span>
+                        Start 3D Live Doctor Call
+                    </button>
+                    <button class="btn-end-prescription" id="btn-open-prescription" onclick="endVisitAndGeneratePrescription()">
+                        📋 End Visit & Get Prescription
+                    </button>
+                </div>
+                <div class="patient-info-pill" id="patient-info-display" style="display:none;">
+                    <span>Patient ID: Not Registered</span>
+                </div>
+            </header>
+
+            <!-- VIEW 1: PATIENT PORTAL -->
+            <section class="page-view active" id="view-patient">
+                <!-- 3D HOLOGRAPHIC DOCTOR CONSULTATION STAGE -->
+                <div class="live-doctor-stage" id="live-doctor-call-stage">
+                    <div class="visualizer-3d-wrapper">
+                        <canvas id="canvas-3d-doctor"></canvas>
+                        
+                        <div class="visualizer-3d-hud">
+                            <div class="hud-top-bar">
+                                <div class="hud-doctor-tag">
+                                    <span class="live-glow-dot"></span>
+                                    <span>DR. DHANVANTARI, MD • 3D HOLOGRAPHIC AI DOCTOR</span>
+                                </div>
+                                <div class="hud-model-pill" id="doctor-3d-engine-tag">
+                                    🎙️ VibeVoice 1.5B Active
+                                </div>
+                            </div>
+
+                            <div class="hud-center-status" id="doctor-call-status">
+                                Connecting with Dr. Dhanvantari...
+                            </div>
+
+                            <div class="live-subtitles-box" id="live-subtitles-caption">
+                                "Hello, I am Dr. Dhanvantari. I am listening to you live in 3D. Please speak your health symptoms."
+                            </div>
+
+                            <!-- Interactive Stage Controls -->
+                            <div class="stage-controls-bar">
+                                <button class="btn-stage-mic-pulse" id="btn-stage-mic" onclick="toggleStageMic()">
+                                    <span id="btn-stage-mic-icon">🎙️</span>
+                                    <span id="btn-stage-mic-label">Listening to You... (Tap to Pause)</span>
+                                </button>
+                                <select id="stage-language-select" class="btn-stage-control" onchange="changeVoiceLanguage(event)">
+                                    <option value="en-IN" selected>English (Indian)</option>
+                                    <option value="hi-IN">हिन्दी (Hindi / VibeVoice)</option>
+                                </select>
+                                <button class="btn-stage-control btn-stage-rx" onclick="endVisitAndGeneratePrescription()">
+                                    📋 End Visit & Get Rx
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Main Consultation & Chat Grid -->
+                <div class="patient-grid">
+                    <!-- Left Symptoms Tracker Panel -->
+                    <div class="symptoms-panel">
+                        <div class="card triage-card">
+                            <h3 class="section-label">Active Triage Level</h3>
+                            <div class="status-badge" id="triage-status-badge">NOT INITIALIZED</div>
+                        </div>
+
+                        <div class="card">
+                            <h3 class="section-label" style="margin-bottom: 12px;">Symptoms Extracted</h3>
+                            <div class="symptoms-tracker-list" id="extracted-symptoms-list">
+                                <div style="color: var(--text-muted); font-size: 12px; text-align: center; padding: 10px;">
+                                    Start chatting to extract symptoms.
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Right Chat Triage Bot -->
+                    <div class="chat-panel">
+                        <div class="chat-history" id="chat-history-container">
+                            <!-- Disclaimer Message -->
+                            <div class="chat-message assistant">
+                                <div class="message-bubble" style="background: rgba(239, 68, 68, 0.05); border: 1px solid rgba(239, 68, 68, 0.2);">
+                                    <strong>Disclaimer:</strong> This system is a symptom checker and triage tool. It does not provide medical diagnoses. If you have severe symptoms, call emergency services immediately. If you need prescriptions, an RMP must review and sign off.
+                                </div>
+                                <div class="message-meta">System Note</div>
+                            </div>
+                            
+                            <div class="chat-message assistant">
+                                <div class="message-bubble">
+                                    Hello, I am Dr. Dhanvantari. How can I help you evaluate your health symptoms today? You can type, attach medical scans, or click **Start 3D Live Doctor Call** to speak with me directly.
+                                </div>
+                                <div class="message-meta">Dhanvantari AI</div>
+                            </div>
+                        </div>
+
+                        <!-- Typing Indicator -->
+                        <div class="typing-indicator" id="chat-typing-indicator" style="margin-left: 32px; margin-bottom: 12px;">
+                            <div class="typing-dot"></div>
+                            <div class="typing-dot"></div>
+                            <div class="typing-dot"></div>
+                        </div>
+
+                        <!-- Quick Testing Queries -->
+                        <div class="quick-replies">
+                            <button class="quick-reply-btn" onclick="sendQuickMessage('I have a high fever of 102F since yesterday with chills')">High Fever & Chills</button>
+                            <button class="quick-reply-btn" onclick="sendQuickMessage('Severe crushing chest pain radiating to my left arm')">Chest Pain (Emergency)</button>
+                            <button class="quick-reply-btn" onclick="sendQuickMessage('Mild dry cough and throat irritation')">Mild Cough</button>
+                            <button class="quick-reply-btn" onclick="sendQuickMessage('Severe stomach ache and vomiting since morning')">Stomach Ache</button>
+                        </div>
+
+                        <!-- Chat input with Multimodal File Upload -->
+                        <div class="chat-input-container">
+                            <input type="file" id="chat-file-upload" accept="image/*,.pdf" style="display:none;" onchange="handleFileUpload(event)">
+                            <button class="btn-mic" id="btn-chat-upload" onclick="document.getElementById('chat-file-upload').click()" title="Upload Chest X-Ray or Lab Report">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m21.44 11.05-9.19 9.19a6 6 0 0 1-8.49-8.49l8.57-8.57A4 4 0 1 1 18 8.84l-8.59 8.57a2 2 0 0 1-2.83-2.83l8.49-8.48"/></svg>
+                            </button>
+                            <button class="btn-mic" id="btn-chat-mic" onclick="toggleMicRecording()" title="Speak your symptoms">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3Z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" x2="12" y1="19" y2="22"/></svg>
+                            </button>
+                            <input type="text" class="chat-input" id="chat-user-input" placeholder="Type symptoms or attach X-Ray / Lab report..." onkeydown="handleChatKey(event)">
+                            <button class="btn-send" id="chat-send-btn" onclick="sendChatMessage()">
+                                Send
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- VIEW 2: DOCTOR DASHBOARD -->
+            <section class="page-view" id="view-doctor">
+                <div class="doctor-grid">
+                    <!-- Left: Escalated Review Queue -->
+                    <div class="queue-panel">
+                        <h3 class="section-label">Review Queue (Escalated Cases)</h3>
+                        <div class="queue-list" id="doctor-queue-container">
+                            <!-- Loaded dynamically -->
+                        </div>
+                    </div>
+
+                    <!-- Center: Selected Conversation Transcript -->
+                    <div class="doctor-viewer">
+                        <div class="doctor-viewer-header" id="selected-case-header">
+                            <h3 style="font-family: var(--font-outfit);">No Case Selected</h3>
+                            <p style="font-size: 12px; color: var(--text-muted);">Select a case from the queue to review chat transcripts.</p>
+                        </div>
+                        
+                        <div class="doctor-chat-history" id="doctor-transcript-container">
+                            <div style="color: var(--text-muted); font-size: 14px; text-align: center; margin-top: 40px;">
+                                Transcript will load here.
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Right: Prescription Approval Form -->
+                    <div class="prescription-panel" id="doctor-approval-container" style="display:none;">
+                        <h3 class="section-label">Prescription Sign-off</h3>
+                        
+                        <div class="form-group">
+                            <label>RMP Doctor Name</label>
+                            <input type="text" class="form-control" id="form-doctor-name" value="Dr. Vikram R. Iyer">
+                        </div>
+
+                        <div class="form-group">
+                            <label>RMP Registration License No</label>
+                            <input type="text" class="form-control" id="form-doctor-license" value="RMP-MCI-983120">
+                        </div>
+
+                        <div class="form-group">
+                            <label>Medication & Clinical Prescription (Markdown/Text)</label>
+                            <textarea class="form-control" id="form-prescription-text" rows="12"></textarea>
+                        </div>
+
+                        <div class="form-group">
+                            <label>RMP Authorization Signature (Type full name to sign)</label>
+                            <input type="text" class="form-control" id="form-doctor-signature" placeholder="Dr. Vikram Iyer">
+                        </div>
+
+                        <button class="btn-primary" id="btn-approve-prescription" onclick="approvePrescription()">
+                            Sign & Approve Prescription
+                        </button>
+                    </div>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <!-- DIGITAL PRESCRIPTION MODAL -->
+    <div class="prescription-modal-overlay" id="prescription-modal-overlay">
+        <div class="prescription-card-modal">
+            <div class="prescription-header">
+                <div>
+                    <h2 style="font-family: var(--font-outfit); font-size: 20px;">Digital Medical Prescription</h2>
+                    <p style="font-size: 12px; opacity: 0.9; margin-top: 2px;">Dhanvantari Telehealth • Telemedicine Practice Guidelines 2020</p>
+                </div>
+                <button onclick="closePrescriptionModal()" style="background: none; border: none; color: #fff; font-size: 24px; cursor: pointer;">&times;</button>
+            </div>
+            <div class="prescription-body">
+                <div style="display: flex; justify-content: space-between; align-items: center; background: #f8fafc; padding: 12px 16px; border-radius: 8px; border: 1px solid var(--border-color); font-size: 12px;">
+                    <div>
+                        <strong>Patient ID:</strong> <span id="rx-patient-id">PAT-101</span><br>
+                        <strong>Date:</strong> <span id="rx-date">16-Aug-2026</span>
+                    </div>
+                    <div style="text-align: right;">
+                        <strong>Triage Urgency:</strong> <span id="rx-triage-badge" class="triage-tag self_care">SELF CARE</span><br>
+                        <strong>Prescription ID:</strong> <span id="rx-consultation-id">RX-9941</span>
+                    </div>
+                </div>
+
+                <div>
+                    <h4 style="font-family: var(--font-outfit); font-size: 13px; color: var(--text-muted); text-transform: uppercase; margin-bottom: 4px;">Primary Clinical Diagnosis</h4>
+                    <div style="font-size: 15px; font-weight: 600; color: var(--text-main);" id="rx-diagnosis-text">
+                        Acute Febrile Presentation (ICD-10: R50.9)
+                    </div>
+                </div>
+
+                <div>
+                    <h4 style="font-family: var(--font-outfit); font-size: 13px; color: var(--text-muted); text-transform: uppercase; margin-bottom: 6px;">Rx - Prescribed Medications (NLEM Grounded)</h4>
+                    <table class="rx-med-table">
+                        <thead>
+                            <tr>
+                                <th>Medication</th>
+                                <th>Dosage & Frequency</th>
+                                <th>Duration</th>
+                            </tr>
+                        </thead>
+                        <tbody id="rx-medications-table-body">
+                            <!-- Populated dynamically -->
+                        </tbody>
+                    </table>
+                </div>
+
+                <div>
+                    <h4 style="font-family: var(--font-outfit); font-size: 13px; color: var(--text-muted); text-transform: uppercase; margin-bottom: 4px;">Clinical Advice & Hydration</h4>
+                    <ul id="rx-advice-list" style="font-size: 12px; line-height: 1.6; padding-left: 18px; color: var(--text-main);">
+                        <!-- Populated dynamically -->
+                    </ul>
+                </div>
+
+                <div style="background: rgba(239, 68, 68, 0.05); border: 1px dashed rgba(239, 68, 68, 0.3); padding: 10px 14px; border-radius: 8px; font-size: 11px; color: var(--text-muted);">
+                    ⚠️ <strong>Telemedicine Compliance:</strong> This electronic prescription is pre-generated under clinical supervision. In compliance with the Telemedicine Guidelines 2020 (India), no Schedule X drugs are permitted.
+                </div>
+            </div>
+            <div class="prescription-footer">
+                <button class="quick-reply-btn" onclick="closePrescriptionModal()">Close</button>
+                <a id="btn-download-pdf-link" href="#" target="_blank" class="btn-primary" style="text-decoration: none; display: inline-flex; align-items: center; gap: 8px; font-size: 13px;">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" x2="12" y1="15" y2="3"/></svg>
+                    Download Official PDF Prescription
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- DPDP CONSENT MODAL (Shows on page load) -->
+    <div class="modal-overlay" id="consent-modal-overlay">
+        <div class="consent-modal">
+            <div class="consent-header">
+                <h2>DPDP Act 2023 Consent</h2>
+                <p style="font-size: 13px; color: var(--text-muted); margin-top: 4px;">Indian Telemedicine Practice Guidelines & Privacy Protocol</p>
+            </div>
+            
+            <div class="consent-box">
+                <strong>Scope of Consent:</strong><br>
+                By accepting this, you authorize Dhanvantari AI to process your symptoms data for triage and educational assessment.
+                <br><br>
+                <strong>Important Constraints:</strong><br>
+                1. <strong>Triage Only:</strong> This AI acts as a triage assistant.
+                2. <strong>RMP Loop:</strong> Prescriptions drafted by the AI have no legal authorization until reviewed, finalized, and electronically signed by a Registered Medical Practitioner (RMP).
+                3. <strong>Data Erasure:</strong> You retain the right to request deletion of your health consultations under DPDP regulations.
+            </div>
+
+            <div class="form-group">
+                <label>Enter Patient Email (used to record consent and tracking ID)</label>
+                <input type="email" class="form-control" id="consent-patient-email" placeholder="patient@example.com" value="test-patient@gmail.com">
+            </div>
+
+            <label class="checkbox-container">
+                <input type="checkbox" id="consent-checkbox-agreed" checked>
+                <span>I explicitly give consent to process my health symptoms under DPDP Act 2023.</span>
+            </label>
+
+            <button class="btn-primary" onclick="submitConsentForm()">Agree & Connect to Triage</button>
+        </div>
+    </div>
+
+    <!-- Toast Notifications -->
+    <div class="toast-container" id="toast-container"></div>
+
+    <!-- Scripts -->
+    <script src="/static/js/visualizer3d.js"></script>
+    <script src="/static/js/app.js"></script>
+</body>
+</html>
